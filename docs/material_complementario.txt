@@ -1,0 +1,36 @@
+﻿Obligatorio
+Obligatorio
+
+
+Adjunto links de material
+Unidad 1: https://drive.google.com/file/d/1QThbDkVl8G7d2mgVv8Kz0TxQxUylseC7/view?usp=sharing
+Unidad 2: https://drive.google.com/file/d/1TvtYhBuIyqmT4IPI44XMwtdvFO3a9SNR/view?usp=sharing
+
+
+complementario
+complementario
+
+
+EDA infografía: 
+https://drive.google.com/file/d/1Ku69Vjhgg_gLYPWuh2tlz1ir0o0oIV2H/view?usp=sharing
+IA infografía:
+https://drive.google.com/file/d/1XhxabiqJQSC_bDtZ7gekXgDsE_DnH6kL/view?usp=sharing
+Python para EDA:
+https://drive.google.com/file/d/1hzluBoH7JbystUCOt81YNM9onvw8EUSS/view?usp=sharing
+Regresión Lineal:
+https://drive.google.com/file/d/1eZ-iwMHgN4ERtYnBplj8n_ra9BXPV8hB/view?usp=sharing
+Regresión Lineal Múltiple:
+https://drive.google.com/file/d/1aNGnsVCTtoEW2zcwQvh4nGAOZTwZgLfX/view?usp=sharing
+Clasificación: https://drive.google.com/file/d/18bN2bIrBtUcxkHfaeILTeyNvxQW6YQsd/view?usp=sharing
+
+
+Colabs
+Adjunto links
+EDA en Colab:
+https://colab.research.google.com/drive/1JJug7K2u-PbloPOtMwGtKdZPn44PoGCK?usp=sharing
+EDA automatizado:
+https://colab.research.google.com/drive/1R9WB0AEnFtG2PBAb4Ob2Z0stYcLEkOux?usp=sharing
+CSV:
+https://drive.google.com/file/d/18WFLWvX1G7urijCdWY7Ua80abH11ezol/view?usp=sharing
+Regresión:
+https://colab.research.google.com/drive/1aYzKo9ZZfZqvTsTV0fz6vhdUf_-gyOga?usp=sharing

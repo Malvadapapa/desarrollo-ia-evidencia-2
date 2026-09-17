@@ -1,0 +1,5 @@
+Brand,Supplier ID,Supplier Name,Avg Lead Time (Days),Lead Time Std Dev (Days),Min Lead Time (Days),Max Lead Time (Days)
+BRAND_A,SUP0001,Supplier 1,40,6.7,30,70
+BRAND_D,SUP0002,Supplier 2,60,9.2,45,100
+BRAND_C,SUP0003,Supplier 3,50,10,30,90
+BRAND_B,SUP0004,Supplier 4,60,11.7,50,120

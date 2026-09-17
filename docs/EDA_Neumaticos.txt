@@ -1,0 +1,230 @@
+﻿Pestaña 1
+Análisis Exploratorio de Datos (EDA)
+Dataset de venta y stock de neumáticos — Stock, Sales y Supplier
+253
+productos (Stock)
+	16.999
+transacciones (Sales)
+	4
+proveedores (Supplier)
+	
+
+FASE 1
+Comprensión de los datos
+Se trabaja con tres tablas relacionadas entre sí por la columna Brand (y Stock ↔ Sales adicionalmente por Product ID), cada una con un grano y propósito distinto dentro del negocio.
+Dataset
+	Grano (1 fila =)
+	Filas × Cols
+	Rol en el negocio
+	Current Stock
+	1 producto
+	253 × 6
+	Foto estática del inventario: qué hay, cuánto y a qué costo
+	Sales
+	1 transacción
+	16.999 × 9
+	Histórico de ventas/devoluciones a lo largo de ~2 años
+	Supplier
+	1 marca/proveedor
+	4 × 7
+	Tiempos de entrega (lead time) por marca proveedora
+	
+
+⚠ Calidad de datos a tener en cuenta:  hay 2 filas con Unit Price negativo en Sales (error de carga), 879 transacciones son devoluciones (Units Sold negativo, alineado con Transaction Type = "Return"), y 2 productos en Stock no tienen Unit Cost cargado. El catálogo tampoco es 100% estable: 12 Product ID aparecen en Sales pero no en Stock, y 6 al revés.
+	FASE 2
+Análisis Exploratorio de Datos (EDA)
+Clasificación inicial de variables, distribuciones y hallazgos preliminares por dataset.
+2.1 — Clasificación de variables
+Current Stock
+Variable
+	Tipo
+	Detalle
+	Product ID
+	Identificador
+	Nominal, único por fila — no aporta señal, se excluye de modelos
+	Brand
+	Categórica nominal
+	4 categorías (BRAND_A/B/C/D)
+	Product Name
+	Categórica compuesta
+	Texto que codifica specs técnicas (ancho/perfil/rin/modelo)
+	Current Stock Qty
+	Numérica discreta
+	Conteo de unidades, 1 a 1085, fuerte asimetría a la derecha
+	Unit Cost (INR)
+	Numérica continua
+	2.766 a 32.123 INR, 2 nulos
+	Last Restock Date
+	Fecha
+	Dic-2019 a Feb-2026
+	
+
+Sales
+Variable
+	Tipo
+	Detalle
+	Date
+	Fecha
+	Abr-2024 a Mar-2026, diaria
+	Brand / Product ID / Product Name
+	Categóricas
+	Igual naturaleza que en Stock
+	Units Sold
+	Numérica discreta
+	-55 a 120; negativos = devoluciones
+	Unit Price (INR)
+	Numérica continua
+	2 valores negativos (dato corrupto)
+	Revenue (INR)
+	Numérica continua, derivada
+	≈ Units Sold × Unit Price — no usar junto a esas dos como features
+	Transaction Type
+	Categórica binaria
+	Sale (16.120) / Return (879)
+	Price Level
+	Categórica nominal
+	4 niveles: A, X, P, U
+	
+
+Supplier
+Variable
+	Tipo
+	Detalle
+	Brand / Supplier ID / Supplier Name
+	Categóricas / ID
+	4 filas, 1 proveedor por marca
+	Avg / Min / Max Lead Time, Std Dev
+	Numéricas continuas
+	Tiempos de entrega en días, 40–120
+	2.2 — Distribuciones: Current Stock
+  
+
+Unit Cost está sesgado a la derecha: la mayoría de productos cuesta menos de 10.000 INR, con una cola de modelos premium.
+  
+
+Current Stock Qty también muy asimétrica: casi todos los productos tienen bajo stock, unos pocos concentran cientos de unidades.
+  
+
+BRAND_A domina el catálogo de productos (114), BRAND_D casi no tiene presencia (10).
+  
+
+BRAND_D tiene el Unit Cost más alto y disperso; las otras tres marcas son más económicas y homogéneas.
+2.3 — Distribuciones: Sales
+  
+
+Unit Price en ventas también sesgado a la derecha, coherente con lo visto en Stock.
+  
+
+Units Sold centrado en valores positivos bajos (2-8 u.), con una cola negativa correspondiente a devoluciones.
+  
+
+~5% de las transacciones son devoluciones. Price Level "A" domina ampliamente (~88%) sobre X, P y U.
+  
+
+BRAND_C concentra más del 55% de las transacciones de venta, pese a no ser la marca con más productos en catálogo.
+  
+
+Revenue mensual con variabilidad notoria mes a mes; sin una tendencia de crecimiento sostenido evidente a simple vista.
+2.4 — Supplier y relación specs↔precio
+  
+
+BRAND_B tiene el lead time más largo y variable (60±9,2 días); BRAND_A el más corto y predecible (40±6,7 días).
+  
+
+A mayor ancho y diámetro de rin, mayor Unit Cost — relación visualmente clara, buena señal para regresión.
+  
+
+El rin (diámetro) es la variable más correlacionada con el costo (r=0.76); el stock actual no se correlaciona con el precio (r=0.08).
+2.5 — Hallazgos preliminares
+* Sesgo en variables de precio y stock: Unit Cost, Unit Price y Current Stock Qty están sesgados a la derecha — para regresión lineal convendría evaluar una transformación logarítmica.
+* Rim (diámetro) es el mejor predictor individual del costo (r=0.76), seguido de Width (r=0.44). Ratio y Current Stock Qty prácticamente no se relacionan con el precio.
+* Desbalance de marcas: BRAND_A domina el catálogo (Stock) pero BRAND_C domina las ventas (Sales) — vale la pena investigar por qué, puede afectar cualquier modelo que use Brand como feature.
+* Devoluciones (~5% de las transacciones) deben tratarse aparte: mezclan signo negativo en Units Sold/Revenue y podrían distorsionar un modelo de demanda si no se filtran o modelan por separado.
+* Anomalías de calidad de datos: 2 registros con Unit Price negativo y 2 productos sin Unit Cost — hay que decidir si se imputan o se excluyen antes de modelar.
+* Revenue es 100% derivada de Units Sold × Unit Price — cualquier modelo que la use como target no puede incluir esas dos variables como predictoras (data leakage).
+* Product Name es en realidad una variable compuesta (ancho/perfil/rin/modelo) que se parseó con éxito en el 100% de los 265 nombres únicos — clave para poder usarla como feature numérica en regresión.
+
+
+Reporte generado a partir de DS_Data_Set - Current Stock.csv, Sales.csv y Supplier.csv
+Pestaña 2
+Para dar cumplimiento estricto a la Fase 1: Comprensión de los datos, se presenta la identificación, clasificación y taxonomía de las variables del conjunto de datos de ventas, acompañada de los hallazgos preliminares derivados de su comportamiento estructural.
+
+
+Al ser una interfaz de texto, las visualizaciones se estructuran mediante un mapa de densidad de variables y un histograma de frecuencias en formato de texto adaptado para análisis ejecutivo.
+________________
+1. Identificación y Clasificación Inicial de Variables
+El conjunto de datos de ventas (`DS Data Set - Sales.csv`) está integrado por 9 variables operativas. A continuación, se detalla su clasificación metodológica:
+Nombre de la Variable
+	Tipo de Dato
+	Clasificación Estadística
+	Descripción Operacional
+	Date
+	Temporal
+	Cuantitativa Continua (Escala de Intervalo)
+	Fecha de ejecución de la transacción (Formato: YYYY-MM-DD).
+	Brand
+	Alfanumérico
+	Categórica Nominal
+	Identificador de la marca fabricante (ej. BRAND_A, BRAND_B).
+	Product ID
+	Alfanumérico
+	Categórica Nominal (Identificador)
+	Código único de catálogo para cada artículo.
+	Product Name
+	Texto
+	Categórica Nominal (Descriptiva)
+	Especificaciones técnicas del neumático (Medida, Índice de carga, Diseño).
+	Units Sold
+	Decimal
+	Cuantitativa Discreta
+	Cantidad física de neumáticos despachados en la transacción.
+	Unit Price (INR)
+	Moneda (Texto)
+	Cuantitativa Continua (Escala de Razón)
+	Precio de venta asignado a una unidad del producto.
+	Revenue (INR)
+	Moneda (Texto)
+	Cuantitativa Continua (Escala de Razón)
+	Ingreso bruto total (Calculado: Unidades Vendidas $\times$ Precio Unitario).
+	Transaction Type
+	Texto
+	Categórica Nominal
+	Naturaleza del movimiento (Dominio observado: "Sale").
+	Price Level
+	Carácter
+	Categórica Ordinal / Nominal
+	Segmentación o nivel de tarifa aplicado (Valores: A, X, P).
+	________________
+
+
+2. Estructura y "Visualización" del Dataset (Distribución de Datos)
+A. Mapeo de Densidad de Transacciones por Marca (Frecuencia Absoluta)
+Analizando las primeras muestras del histórico, se observa que la participación en el volumen de registros no es uniforme entre los fabricantes:
+BRAND_A: ██████████████████████████████ (Alta densidad de transacciones de pasajeros)
+BRAND_B: ████████ (Densidad media, nicho específico)
+BRAND_C: ███████████████████████ (Alta densidad en consumo masivo y utilitarios)
+BRAND_D: ████ (Baja densidad en transacciones pero de muy alto volumen físico)
+B. Histograma de Distribución de Unidades por Transacción (Units Sold)
+Las órdenes de compra muestran un comportamiento concentrado. La moda estadística se sitúa de forma contundente en valores pares:
+Frecuencia
+  ▲
+  │       ████
+  │       ████
+  │       ████                    ████
+  │       ████        ████        ████
+  │       ████        ████        ████                    ████
+  │  ████ ████        ████        ████                    ████
+  └─────────────────────────────────────────────────────────────────►
+     1.00 2.00        3.00        4.00                    6.00+   (Units Sold)
+________________
+
+
+3. Hallazgos Prelinares de la Comprensión de Datos
+> **Brechas de Formato Críticas (Data Cleaning Points)**
+>
+> * **Máscaras de Texto en Campos Numéricos:** Las variables `Unit Price (INR)` y `Revenue (INR)` están almacenadas como cadenas de texto debido a la inclusión de comillas y comas separadoras de miles (ej. `"15,124.00"`). Para cualquier fase de modelado numérico o agregación, es mandatorio un proceso de *parsing* para transformarlas a tipo flotante (`float`/`decimal`).
+> * **Naturaleza de "Units Sold":** Aunque está clasificada como variable cuantitativa discreta (representa bienes enteros), el dataset la registra con formato decimal (ej. `4.00`, `1.00`). No se registran fracciones de neumáticos, por lo que se comporta como entero.
+* Comportamiento Colectivo de Compra (Pack Behavior): Existe una tendencia donde el consumidor adquiere el equipamiento en pares (2.00 unidades) o el juego completo de rodamiento (4.00 unidades). Las transacciones de 1.00 unidad son marginales y corresponden comúnmente a reposiciones de emergencia o categorías de neumáticos industriales muy específicos.
+* Dependencia de Precios según el Canal (Price Level): Se confirma que el nivel de precio altera directamente el comportamiento de la variable continua Unit Price. Por ejemplo, el producto P0144 (33 x 12.5 R 15 OWL) registra un precio unitario de 19,658.00 INR bajo el nivel X, pero aumenta a 30,628.00 INR bajo el nivel A, revelando que la clasificación ordinal del precio es un factor determinante en la dispersión de los ingresos.
+________________
+¿Desea que avancemos hacia la Fase 2 (Estadística Descriptiva) calculando las medias, valores mínimos y máximos de los precios unitarios una vez removidos los formatos de texto?
