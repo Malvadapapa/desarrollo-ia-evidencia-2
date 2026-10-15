@@ -13,6 +13,16 @@
 
 ---
 
+### Enlaces de Acceso al Proyecto y Recursos Oficiales
+* **Repositorio en GitHub:** [https://github.com/Malvadapapa/desarrollo-ia-evidencia-2](https://github.com/Malvadapapa/desarrollo-ia-evidencia-2)
+* **Notebook Ejecutado (Evidencia 3):** [`notebooks/Evidencia_3_Optimizacion.ipynb`](https://github.com/Malvadapapa/desarrollo-ia-evidencia-2/blob/main/notebooks/Evidencia_3_Optimizacion.ipynb)
+* **Modelo Serializado para Producción:** [`models/best_model.joblib`](https://github.com/Malvadapapa/desarrollo-ia-evidencia-2/blob/main/models/best_model.joblib)
+* **Script de Inferencia Operativa (CLI):** [`src/predict.py`](https://github.com/Malvadapapa/desarrollo-ia-evidencia-2/blob/main/src/predict.py)
+* **Mini Backend y Landing Interactiva:** [`demo_app/`](https://github.com/Malvadapapa/desarrollo-ia-evidencia-2/tree/main/demo_app)
+* **Módulo de Optimización y Pipelines:** [`src/model_optimization.py`](https://github.com/Malvadapapa/desarrollo-ia-evidencia-2/blob/main/src/model_optimization.py)
+
+---
+
 ## 1. Resumen Ejecutivo
 
 En la **Evidencia de Aprendizaje N.º 3** se optimizó el modelo supervisado para predecir el costo unitario (`Unit Cost (INR)`) de neumáticos de catálogo, partiendo de la Regresión Lineal Múltiple de la Evidencia 2 ($R^2_{\text{Test}} = 0,7968$; $\text{RMSE}_{\text{Test}} = 2.549,50\text{ INR}$; $\text{MAE}_{\text{Test}} = 1.678,60\text{ INR}$).
@@ -153,6 +163,16 @@ py -3.14 src/predict.py --rim 22.5 --width 279.4 --brand BRAND_D
 # -> Costo Estimado: $24,186.33 INR (imputación automática de perfil)
 ```
 
+### Mini Backend y Landing Page Interactiva (`demo_app/`):
+Para facilitar la interacción del usuario final y la auditoría docente sin requerir comandos de terminal, se desarrolló una aplicación web desacoplada en la carpeta `demo_app/`:
+* **Servidor backend (`demo_app/server.py`):** Expone un endpoint HTTP REST `/api/predict` que procesa solicitudes JSON y devuelve la predicción con detalles técnicos.
+* **Landing interactiva (`demo_app/static/`):** Interfaz moderna y responsiva con selector de dimensiones, marca fabricante, botones de carga rápida de casos típicos y badge visual con el costo estimado en INR.
+* **Ejecución local:**
+  ```powershell
+  py -3.14 demo_app/server.py
+  # Servidor disponible en http://localhost:8000
+  ```
+
 ---
 
 ## 8. Respuestas a las Preguntas Guía de la Cátedra
@@ -168,7 +188,7 @@ py -3.14 src/predict.py --rim 22.5 --width 279.4 --brand BRAND_D
 5. **¿Hubo mejora significativa tras la optimización?**  
    Sí. En validación cruzada pareada, Random Forest superó a la regresión lineal en el **$100\%$ de los pliegues** (diferencia media favorable de $1.208\text{ INR}$), y en Test redujo el MAE en un **$25,94\%$** y el RMSE en un **$12,54\%$**, elevando el $R^2$ a **$0,8446$**.
 6. **¿El modelo se encuentra disponible para producción?**  
-   Sí, implementado en `models/best_model.joblib` con interfaz CLI lista para consumo batch e individual.
+   Sí, implementado en `models/best_model.joblib` con interfaz CLI lista para consumo batch e individual (`src/predict.py`) y una aplicación web interactiva con mini backend en `demo_app/`.
 
 ---
 

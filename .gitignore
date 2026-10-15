@@ -35,8 +35,11 @@ env/
 # Secrets & Configs
 .env
 google_tokens.json
-.agents/skills/ispc-dev/.env
-.agents/skills/ispc-dev/google_tokens.json
+.agents/
+
+# Temporary office files
+~$*.docx
+
 
 # Checkpoints
 .ipynb_checkpoints/
