@@ -2,7 +2,7 @@
 
 ## 🎯 Objetivo del Módulo
 
-Optimizar sistemáticamente el modelo supervisado para predecir el costo unitario de catálogo (`Unit Cost (INR)`) de neumáticos, empleando **Validación Cruzada (5-Fold CV)** y **Búsqueda Exhaustiva de Hiperparámetros (GridSearchCV)**. Comparar múltiples familias algorítmicas (Regresión Lineal OLS, Ridge, Lasso, Random Forest y Gradient Boosting), validar la significancia estadística de la mejora sobre el conjunto de prueba independiente ($N=51$) y desplegar la solución en producción mediante serialización con `joblib` e interfaz CLI.
+Optimizar sistemáticamente el modelo supervisado para predecir el costo unitario de catálogo (`Unit Cost (INR)`) de neumáticos, empleando **Validación Cruzada (5-Fold CV)** y **Búsqueda Exhaustiva de Hiperparámetros (GridSearchCV)**. Comparar tres enfoques metodológicos (Regresión Lineal OLS baseline, Ridge regularizado y Random Forest), validar la significancia estadística de la mejora sobre el conjunto de prueba independiente ($N=51$) y desplegar la solución en producción mediante serialización con `joblib` e interfaz CLI.
 
 ---
 
@@ -15,17 +15,15 @@ Optimizar sistemáticamente el modelo supervisado para predecir el costo unitari
 
 ### 2. Optimización de Hiperparámetros (Grid Search)
 - **Qué es:** Procedimiento determinista que explora todas las combinaciones posibles de una grilla de valores predefinidos de hiperparámetros, seleccionando la combinación que minimiza el error de validación cruzada.
-- **Diferencia entre Parámetros e Hiperparámetros:** Los parámetros se aprenden analíticamente durante el entrenamiento (ej. los pesos $\beta_j$ de la regresión o las divisiones de los árboles); los hiperparámetros se configuran a priori para guiar el aprendizaje (ej. penalización $\alpha$, tasa de aprendizaje $\eta$, profundidad máxima de árboles).
+- **Diferencia entre Parámetros e Hiperparámetros:** Los parámetros se aprenden analíticamente durante el entrenamiento (ej. los pesos $\beta_j$ de la regresión o las divisiones de los árboles); los hiperparámetros se configuran a priori para guiar el aprendizaje (ej. penalización $\alpha$, profundidad máxima de árboles).
 
-### 3. Regularización Lineal: Ridge ($L_2$) y Lasso ($L_1$)
-- **Qué es:** Modificación de la función de costo de Mínimos Cuadrados Ordinarios sumando una penalización sobre la magnitud de los coeficientes.
-  - **Ridge ($L_2$):** Penaliza la suma de cuadrados $\sum \beta_j^2$. Contrae coeficientes sin eliminarlos, mitigando la multicolinealidad entre `rim` y `width`.
-  - **Lasso ($L_1$):** Penaliza la suma de valores absolutos $\sum |\beta_j|$. Es capaz de anular coeficientes irrelevantes (selección automática de variables).
-- **Escalado obligatorio:** Ambos requieren `StandardScaler`, ya que de lo contrario las variables con mayor rango numérico serían penalizadas injustamente.
+### 3. Regularización Lineal: Ridge ($L_2$)
+- **Qué es:** Modificación de la función de costo de Mínimos Cuadrados Ordinarios sumando una penalización sobre la magnitud cuadrática de los coeficientes ($\alpha \sum \beta_j^2$). Contrae coeficientes sin eliminarlos, mitigando la multicolinealidad entre `rim` y `width` ($r = 0,57$).
+- **Escalado obligatorio:** Requiere `StandardScaler`, ya que de lo contrario las variables con mayor rango numérico serían penalizadas desproporcionadamente.
 
-### 4. Ensambles de Árboles: Random Forest y Gradient Boosting
-- **Random Forest (Bagging):** Construye múltiples árboles independientes mediante muestreo con reemplazo (*bootstrap*) y subconjuntos aleatorios de variables. El promedio reduce la varianza drásticamente sin sesgo adicional.
-- **Gradient Boosting (Boosting):** Construye árboles de forma secuencial aditiva, donde cada nuevo árbol aprende a predecir los residuos del ensamble previo. Es ideal para modelar relaciones no lineales complejas y saltos abruptos de precios (como cubiertas pesadas de `BRAND_D`).
+### 4. Ensambles de Árboles: Random Forest (Bagging)
+- **Qué es:** Construye múltiples árboles independientes (aquí 200) mediante muestreo con reemplazo (*bootstrap*) y subconjuntos aleatorios de variables (*feature bagging*).
+- **Por qué supera a los lineales:** El promedio de árboles reduce la varianza drásticamente y es capaz de capturar umbrales discretos y relaciones no lineales complejas (como los sobrecostos estructurales de cubiertas pesadas de `BRAND_D`), donde los hiperplanos lineales fallan.
 
 ---
 
@@ -35,9 +33,7 @@ Optimizar sistemáticamente el modelo supervisado para predecir el costo unitari
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Regresión OLS (Ev2)** | Lineal OLS | $2.589,29 \pm 1.350$ | $2.549,50$ | $1.678,60$ | $0,7968$ | Baseline ($0\%$) |
 | **Ridge ($\alpha=5.0$)** | Lineal Regularizado ($L_2$) | $2.547,51 \pm 1.257$ | $2.696,96$ | $1.747,88$ | $0,7727$ | $-5,78\%$ |
-| **Lasso ($\alpha=25.0$)** | Lineal Regularizado ($L_1$) | $2.577,68 \pm 1.320$ | $2.585,88$ | $1.673,94$ | $0,7910$ | $-1,43\%$ |
-| **Random Forest** | Ensamble Bagging | **$1.381,01 \pm 532$** | $2.229,88$ | $1.243,18$ | $0,8446$ | **$+12,54\%$** |
-| **Gradient Boosting (Ganador)** | Ensamble Boosting | $1.432,78 \pm 760$ | **$1.577,13$** | **$975,85$** | **$0,9223$** | **$+38,14\%$** |
+| **Random Forest (Ganador)** | Ensamble Bagging | **$1.381,01 \pm 532$** | **$2.229,88$** | **$1.243,18$** | **$0,8446$** | **$+12,54\%$** |
 
 ---
 
