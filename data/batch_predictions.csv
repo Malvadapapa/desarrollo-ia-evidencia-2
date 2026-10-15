@@ -1,0 +1,10 @@
+rim,width,ratio,Brand,description,predicted_unit_cost_inr
+13.0,155.0,70.0,BRAND_A,Turismo subcompacto base,4013.0544642857144
+14.0,175.0,65.0,BRAND_C,Turismo económico urbano,3870.803
+15.0,195.0,65.0,BRAND_B,Turismo mediano / familiar,5955.223333333332
+16.0,205.0,55.0,BRAND_A,Sedan confort,6016.24384920635
+17.0,225.0,50.0,BRAND_A,SUV / Deportivo,7123.1075
+18.0,235.0,45.0,BRAND_C,Sedan ejecutivo,7854.59875
+20.0,275.0,40.0,BRAND_B,Camioneta alta gama,12225.912
+22.5,279.4,,BRAND_D,Transporte pesado / Camión (perfil no especificado),24186.329968253965
+22.5,295.0,80.0,BRAND_D,Transporte industrial / Carga pesada,27356.599213827845
