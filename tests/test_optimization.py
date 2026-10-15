@@ -7,7 +7,6 @@ import unittest
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import LinearRegression, Ridge
-from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 
 from src.data_preprocessing import load_and_preprocess_data, split_data
 from src.model_optimization import (
@@ -17,7 +16,9 @@ from src.model_optimization import (
     cross_validate_pipeline,
     run_grid_search,
     evaluate_model_on_test,
-    compare_models_dataframe
+    compare_models_dataframe,
+    get_default_search_spaces,
+    paired_fold_comparison
 )
 from src.regression_models import (
     plot_cv_comparison,
@@ -105,17 +106,17 @@ class TestOptimizationPipeline(unittest.TestCase):
                 'improvement_pct': 0.0
             },
             {
-                'name': 'Gradient Boosting',
-                'type': 'Ensamble Boosting',
-                'cv_rmse_mean': 1432.78,
-                'cv_rmse_std': 280.45,
-                'cv_mae_mean': 1020.15,
-                'cv_mae_std': 145.20,
-                'cv_r2_mean': 0.8850,
-                'test_rmse': 1577.13,
-                'test_mae': 975.85,
-                'test_r2': 0.9223,
-                'improvement_pct': 38.14
+                'name': 'Random Forest',
+                'type': 'Ensamble Bagging',
+                'cv_rmse_mean': 1381.01,
+                'cv_rmse_std': 532.77,
+                'cv_mae_mean': 805.46,
+                'cv_mae_std': 202.17,
+                'cv_r2_mean': 0.9280,
+                'test_rmse': 2229.88,
+                'test_mae': 1243.18,
+                'test_r2': 0.8446,
+                'improvement_pct': -12.54
             }
         ]
         df_comp = compare_models_dataframe(summary)
@@ -143,7 +144,7 @@ class TestOptimizationPipeline(unittest.TestCase):
         y_dummy = pd.Series([5000.0, 10000.0, 15000.0, 20000.0])
         preds_dummy = {
             'OLS (Baseline Ev2)': np.array([5200.0, 9500.0, 14800.0, 19200.0]),
-            'Gradient Boosting (Ganador)': np.array([5050.0, 9900.0, 15100.0, 20050.0])
+            'Random Forest (Ganador)': np.array([5050.0, 9900.0, 15100.0, 20050.0])
         }
         plot_actual_vs_predicted_advanced(y_dummy, preds_dummy, output_path=p_scatter)
         plot_residuals_diagnostics_advanced(y_dummy, preds_dummy, output_path=p_res)
@@ -172,6 +173,21 @@ class TestOptimizationPipeline(unittest.TestCase):
         self.assertGreater(pred, 0)
         
         os.remove(tmp_model_path)
+
+    def test_search_spaces_only_ridge_and_rf(self):
+        """La grilla de optimización contiene solo Ridge y Random Forest."""
+        self.assertListEqual(sorted(get_default_search_spaces().keys()), ['Random Forest', 'Ridge'])
+
+    def test_paired_fold_comparison(self):
+        """La comparación pareada cuenta victorias y diferencia media por fold."""
+        base = np.array([2000.0, 2200.0, 1900.0, 5200.0, 1500.0])
+        cand = np.array([1200.0, 2300.0, 900.0, 1800.0, 800.0])
+        res = paired_fold_comparison(base, cand)
+        self.assertEqual(res['wins'], 4)
+        self.assertEqual(res['n_folds'], 5)
+        self.assertAlmostEqual(res['mean_diff'], float((base - cand).mean()))
+        with self.assertRaises(ValueError):
+            paired_fold_comparison(base, cand[:3])
 
 
 if __name__ == "__main__":
