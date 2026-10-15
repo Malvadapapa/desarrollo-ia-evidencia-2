@@ -152,6 +152,28 @@ class TestOptimizationPipeline(unittest.TestCase):
             self.assertTrue(os.path.exists(path), f"El archivo {path} debe existir")
             os.remove(path)
 
+    def test_model_export_and_inference(self):
+        """Verifica la persistencia con joblib y la inferencia individual."""
+        from src.model_optimization import save_model_artifact, load_model_artifact
+        from src.predict import predict_single_tire
+        
+        pipe = build_pipeline(LinearRegression())
+        pipe.fit(self.X_train, self.y_train)
+        
+        tmp_model_path = "models/test_temp_model.joblib"
+        save_model_artifact(pipe, tmp_model_path)
+        self.assertTrue(os.path.exists(tmp_model_path))
+        
+        reloaded = load_model_artifact(tmp_model_path)
+        self.assertTrue(hasattr(reloaded, 'predict'))
+        
+        pred = predict_single_tire(rim=15.0, width=195.0, ratio=65.0, brand='BRAND_B', model_path=tmp_model_path)
+        self.assertTrue(np.isfinite(pred))
+        self.assertGreater(pred, 0)
+        
+        os.remove(tmp_model_path)
+
 
 if __name__ == "__main__":
     unittest.main()
+

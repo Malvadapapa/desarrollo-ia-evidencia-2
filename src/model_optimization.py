@@ -246,3 +246,19 @@ def compare_models_dataframe(
             'Mejora Test RMSE (%)': f"{m.get('improvement_pct', 0.0):+.2f}%"
         })
     return pd.DataFrame(records)
+
+
+def save_model_artifact(model: BaseEstimator, filepath: str) -> str:
+    """Serializa un pipeline o modelo entrenado a disco usando joblib."""
+    import joblib
+    import os
+    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+    joblib.dump(model, filepath)
+    return filepath
+
+
+def load_model_artifact(filepath: str) -> BaseEstimator:
+    """Carga un pipeline o modelo previamente serializado con joblib."""
+    import joblib
+    return joblib.load(filepath)
+
