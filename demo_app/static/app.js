@@ -1,6 +1,7 @@
 /**
  * NeumaPredict AI - Frontend Interaction & Ingestion Client
  * Tecnicatura Superior en Desarrollo de Software - ISPC
+ * Paleta del Proyecto: #5269E4 (Azul Real), #E3D252 (Oro), #E3AF52 (Ocre), #565863 (Pizarra)
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -24,19 +25,19 @@ document.addEventListener('DOMContentLoaded', () => {
       ratioInput.dataset.previousValue = ratioInput.value;
       ratioInput.value = '';
       ratioInput.placeholder = 'Imputación mediana (automática)';
-      ratioHint.textContent = 'El pipeline calculará la mediana aprendida en entrenamiento (sin fuga de datos).';
-      ratioHint.style.color = '#38bdf8';
+      ratioHint.textContent = 'El preprocesador imputa la mediana aprendida en entrenamiento (sin fuga de datos).';
+      ratioHint.style.color = 'var(--color-ochre)';
     } else {
       ratioInput.disabled = false;
       ratioInput.value = ratioInput.dataset.previousValue || '55.0';
       ratioInput.placeholder = 'ej. 55';
-      ratioHint.textContent = 'Altura del flanco en proporción al ancho.';
+      ratioHint.textContent = 'Relación porcentual de la altura del flanco.';
       ratioHint.style.color = '';
     }
   });
 
-  // Manejo de Presets Rápidos
-  document.querySelectorAll('.preset-btn').forEach(btn => {
+  // Manejo de los 5 Presets de Prueba Rápida
+  document.querySelectorAll('.preset-card, .preset-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const rim = btn.dataset.rim;
       const width = btn.dataset.width;
@@ -53,12 +54,12 @@ document.addEventListener('DOMContentLoaded', () => {
         ratioInput.value = '';
         ratioInput.placeholder = 'Imputación mediana';
         ratioHint.textContent = 'Segmento pesado: perfil ausente, resuelto por preprocesador.';
-        ratioHint.style.color = '#38bdf8';
+        ratioHint.style.color = 'var(--color-ochre)';
       } else {
         chkAutoRatio.checked = false;
         ratioInput.disabled = false;
         ratioInput.value = ratio;
-        ratioHint.textContent = 'Altura del flanco en proporción al ancho.';
+        ratioHint.textContent = 'Relación porcentual de la altura del flanco.';
         ratioHint.style.color = '';
       }
 
@@ -81,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ratioInput.value = '55.0';
     chkAutoRatio.checked = false;
     brandSelect.value = 'BRAND_A';
-    ratioHint.textContent = 'Altura del flanco en proporción al ancho.';
+    ratioHint.textContent = 'Relación porcentual de la altura del flanco.';
     ratioHint.style.color = '';
     executePrediction();
   });
@@ -95,14 +96,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const brand = brandSelect.value;
 
     if (isNaN(rim) || isNaN(width)) {
-      alert('Por favor complete las dimensiones obligatorias (Rin y Ancho).');
+      alert('Por favor complete las dimensiones requeridas (Rin y Ancho).');
       return;
     }
 
     // Estado visual de carga
     btnSubmit.disabled = true;
-    btnSubmit.querySelector('.btn-text').textContent = 'Estimando...';
-    resultPrice.style.opacity = '0.4';
+    btnSubmit.querySelector('.btn-text').textContent = 'Calculando...';
+    resultPrice.style.opacity = '0.35';
 
     try {
       const response = await fetch('/api/predict', {
@@ -119,12 +120,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await response.json();
 
       if (response.ok && data.status === 'success') {
-        // Formatear precio
         const formatted = data.formatted_cost;
         resultPrice.textContent = formatted;
-        resultPrice.style.color = '#38bdf8';
+        resultPrice.style.color = 'var(--color-gold)';
 
-        // Actualizar resumen de especificaciones
         const ratioText = ratio !== null ? `/${ratio}` : ' (perfil imputado)';
         resultSpecsSummary.textContent = `Neumático ${width}${ratioText} R${rim} · Fabricante ${brand}`;
       } else {
@@ -134,8 +133,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } catch (err) {
       resultPrice.textContent = 'Offline';
-      resultPrice.style.color = '#f59e0b';
-      resultSpecsSummary.textContent = 'Servidor local no disponible. Verifique que `py -3.14 demo_app/server.py` esté activo.';
+      resultPrice.style.color = 'var(--color-ochre)';
+      resultSpecsSummary.textContent = 'Servidor local no disponible. Verifique que `py demo_app/server.py` esté activo.';
     } finally {
       btnSubmit.disabled = false;
       btnSubmit.querySelector('.btn-text').textContent = 'Calcular Costo Estimado';
@@ -143,6 +142,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Ejecutar una primera inferencia por defecto al cargar la página
+  // Inferencia inicial al cargar
   executePrediction();
 });

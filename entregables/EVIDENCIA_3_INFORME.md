@@ -14,12 +14,12 @@
 ---
 
 ### Enlaces de Acceso al Proyecto y Recursos Oficiales
-* **Repositorio en GitHub:** [https://github.com/Malvadapapa/desarrollo-ia-evidencia-2](https://github.com/Malvadapapa/desarrollo-ia-evidencia-2)
-* **Notebook Ejecutado (Evidencia 3):** [`notebooks/Evidencia_3_Optimizacion.ipynb`](https://github.com/Malvadapapa/desarrollo-ia-evidencia-2/blob/main/notebooks/Evidencia_3_Optimizacion.ipynb)
-* **Modelo Serializado para Producción:** [`models/best_model.joblib`](https://github.com/Malvadapapa/desarrollo-ia-evidencia-2/blob/main/models/best_model.joblib)
-* **Script de Inferencia Operativa (CLI):** [`src/predict.py`](https://github.com/Malvadapapa/desarrollo-ia-evidencia-2/blob/main/src/predict.py)
-* **Mini Backend y Landing Interactiva:** [`demo_app/`](https://github.com/Malvadapapa/desarrollo-ia-evidencia-2/tree/main/demo_app)
-* **Módulo de Optimización y Pipelines:** [`src/model_optimization.py`](https://github.com/Malvadapapa/desarrollo-ia-evidencia-2/blob/main/src/model_optimization.py)
+* **Repositorio en GitHub:** [https://github.com/TeamYear3/Desarrollo-de-IA](https://github.com/TeamYear3/Desarrollo-de-IA)
+* **Notebook Ejecutado (Evidencia 3):** [`notebooks/Evidencia_3_Optimizacion.ipynb`](https://github.com/TeamYear3/Desarrollo-de-IA/blob/main/notebooks/Evidencia_3_Optimizacion.ipynb)
+* **Modelo Serializado para Producción:** [`models/best_model.joblib`](https://github.com/TeamYear3/Desarrollo-de-IA/blob/main/models/best_model.joblib)
+* **Script de Inferencia Operativa (CLI):** [`src/predict.py`](https://github.com/TeamYear3/Desarrollo-de-IA/blob/main/src/predict.py)
+* **Mini Backend y Landing Interactiva:** [`demo_app/`](https://github.com/TeamYear3/Desarrollo-de-IA/tree/main/demo_app)
+* **Módulo de Optimización y Pipelines:** [`src/model_optimization.py`](https://github.com/TeamYear3/Desarrollo-de-IA/blob/main/src/model_optimization.py)
 
 ---
 
