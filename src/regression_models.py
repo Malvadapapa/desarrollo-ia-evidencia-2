@@ -126,7 +126,7 @@ def plot_cv_comparison(cv_scores_dict: Dict[str, np.ndarray], output_path: Optio
     
     box = plt.boxplot(data, tick_labels=models, patch_artist=True, medianprops=dict(color='black', linewidth=1.5))
     
-    colors = ['#aec7e8', '#c7c7c7', '#dbdb8d', '#98df8a', '#2ca02c']
+    colors = ['#aec7e8', '#c7c7c7', '#2ca02c']
     for patch, color in zip(box['boxes'], colors[:len(models)]):
         patch.set_facecolor(color)
         patch.set_alpha(0.8)
@@ -146,7 +146,7 @@ def plot_cv_comparison(cv_scores_dict: Dict[str, np.ndarray], output_path: Optio
 def plot_feature_importances(
     feature_names: List[str],
     importances: np.ndarray,
-    model_name: str = 'Gradient Boosting',
+    model_name: str = 'Random Forest',
     output_path: Optional[str] = None
 ):
     """Genera un gráfico de barras horizontales con la importancia de características."""
@@ -158,7 +158,7 @@ def plot_feature_importances(
     
     bars = plt.barh(range(len(indices)), sorted_importances, color='#1f77b4', alpha=0.85, edgecolor='black')
     plt.yticks(range(len(indices)), sorted_features, fontsize=9)
-    plt.xlabel('Importancia Relativa (Gini / MDI / Impureza)', fontsize=10)
+    plt.xlabel('Importancia relativa (reducción de impureza, MDI)', fontsize=10)
     plt.title(f'Importancia de Variables en el Modelo Ganador ({model_name})', fontsize=12, pad=12)
     plt.grid(True, linestyle='--', alpha=0.5, axis='x')
     
@@ -187,8 +187,7 @@ def plot_actual_vs_predicted_advanced(
     colors = {
         'OLS (Baseline Ev2)': '#ff7f0e',
         'Ridge': '#17becf',
-        'Random Forest': '#9467bd',
-        'Gradient Boosting (Ganador)': '#2ca02c'
+        'Random Forest (Ganador)': '#2ca02c'
     }
     
     min_val = min(y_test.min(), min(p.min() for p in predictions_dict.values()))
@@ -224,7 +223,7 @@ def plot_residuals_diagnostics_advanced(
     """Genera diagnóstico comparativo de residuos (dispersión y densidad) para Baseline vs Ganador."""
     fig, axes = plt.subplots(1, 2, figsize=(13, 5))
     
-    colors = {'OLS (Baseline Ev2)': '#ff7f0e', 'Gradient Boosting (Ganador)': '#2ca02c', 'Random Forest': '#9467bd'}
+    colors = {'OLS (Baseline Ev2)': '#ff7f0e', 'Random Forest (Ganador)': '#2ca02c'}
     
     # Panel 1: Residuos vs Predicción
     for name, y_pred in preds_dict.items():

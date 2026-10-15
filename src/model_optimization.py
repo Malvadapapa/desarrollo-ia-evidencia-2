@@ -11,13 +11,14 @@ from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.base import BaseEstimator
 from sklearn.model_selection import KFold, cross_validate, GridSearchCV
-from sklearn.linear_model import LinearRegression, Ridge, Lasso
-from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
+from sklearn.linear_model import LinearRegression, Ridge
+from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 
 FEATURE_NUM_COLS: List[str] = ['rim', 'width', 'ratio']
 FEATURE_CAT_COLS: List[str] = ['Brand']
+BRAND_CATEGORIES: List[str] = ['BRAND_A', 'BRAND_B', 'BRAND_C', 'BRAND_D']
 
 
 def build_preprocessor(with_scaler: bool = False, reference_brand: str = 'BRAND_A') -> ColumnTransformer:
@@ -48,7 +49,12 @@ def build_preprocessor(with_scaler: bool = False, reference_brand: str = 'BRAND_
         ])
 
     cat_pipeline = Pipeline([
-        ('onehot', OneHotEncoder(drop=[reference_brand], sparse_output=False, handle_unknown='ignore'))
+        ('onehot', OneHotEncoder(
+            categories=[BRAND_CATEGORIES],
+            drop=[reference_brand],
+            sparse_output=False,
+            handle_unknown='ignore'
+        ))
     ])
 
     preprocessor = ColumnTransformer(
@@ -153,12 +159,6 @@ def get_default_search_spaces() -> Dict[str, Dict[str, Any]]:
                 'regressor__alpha': [0.01, 0.1, 1.0, 5.0, 10.0, 50.0, 100.0, 500.0]
             }
         },
-        'Lasso': {
-            'estimator_factory': lambda: build_pipeline(Lasso(random_state=42, max_iter=10000), with_scaler=True),
-            'param_grid': {
-                'regressor__alpha': [0.1, 1.0, 5.0, 10.0, 25.0, 50.0, 100.0]
-            }
-        },
         'Random Forest': {
             'estimator_factory': lambda: build_pipeline(RandomForestRegressor(random_state=42), with_scaler=False),
             'param_grid': {
@@ -167,16 +167,27 @@ def get_default_search_spaces() -> Dict[str, Dict[str, Any]]:
                 'regressor__min_samples_leaf': [1, 2, 4],
                 'regressor__max_features': ['sqrt', 1.0]
             }
-        },
-        'Gradient Boosting': {
-            'estimator_factory': lambda: build_pipeline(GradientBoostingRegressor(random_state=42), with_scaler=False),
-            'param_grid': {
-                'regressor__n_estimators': [100, 150],
-                'regressor__learning_rate': [0.03, 0.05, 0.1],
-                'regressor__max_depth': [2, 3, 4],
-                'regressor__subsample': [0.8, 1.0]
-            }
         }
+    }
+
+
+def paired_fold_comparison(baseline_folds: np.ndarray, candidate_folds: np.ndarray) -> Dict[str, Any]:
+    """Compara dos modelos fold a fold (mismos splits de KFold).
+
+    Devuelve la diferencia media de RMSE (baseline - candidato), su desvío
+    y en cuántos folds el candidato tuvo menor error.
+    """
+    base = np.asarray(baseline_folds, dtype=float)
+    cand = np.asarray(candidate_folds, dtype=float)
+    if base.shape != cand.shape:
+        raise ValueError("Ambos modelos deben evaluarse sobre los mismos folds")
+    diff = base - cand
+    return {
+        'diff_per_fold': diff,
+        'mean_diff': float(diff.mean()),
+        'std_diff': float(diff.std(ddof=1)) if len(diff) > 1 else 0.0,
+        'wins': int((diff > 0).sum()),
+        'n_folds': int(len(diff))
     }
 
 
