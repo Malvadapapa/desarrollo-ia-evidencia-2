@@ -14,6 +14,7 @@
 ---
 
 ### Enlaces de Acceso al Proyecto y Recursos Oficiales
+* **Aplicación Web en Producción (Vercel Live):** [https://desarrollo-de-ia.vercel.app/](https://desarrollo-de-ia.vercel.app/)
 * **Repositorio en GitHub:** [https://github.com/TeamYear3/Desarrollo-de-IA](https://github.com/TeamYear3/Desarrollo-de-IA)
 * **Notebook Ejecutado (Evidencia 3):** [`notebooks/Evidencia_3_Optimizacion.ipynb`](https://github.com/TeamYear3/Desarrollo-de-IA/blob/main/notebooks/Evidencia_3_Optimizacion.ipynb)
 * **Modelo Serializado para Producción:** [`models/best_model.joblib`](https://github.com/TeamYear3/Desarrollo-de-IA/blob/main/models/best_model.joblib)
@@ -163,14 +164,15 @@ py -3.14 src/predict.py --rim 22.5 --width 279.4 --brand BRAND_D
 # -> Costo Estimado: $24,186.33 INR (imputación automática de perfil)
 ```
 
-### Mini Backend y Landing Page Interactiva (`demo_app/`):
-Para facilitar la interacción del usuario final y la auditoría docente sin requerir comandos de terminal, se desarrolló una aplicación web desacoplada en la carpeta `demo_app/`:
-* **Servidor backend (`demo_app/server.py`):** Expone un endpoint HTTP REST `/api/predict` que procesa solicitudes JSON y devuelve la predicción con detalles técnicos.
-* **Landing interactiva (`demo_app/static/`):** Interfaz moderna y responsiva con selector de dimensiones, marca fabricante, botones de carga rápida de casos típicos y badge visual con el costo estimado en INR.
-* **Ejecución local:**
+### Mini Backend y Landing Page Interactiva en Producción:
+Para facilitar la interacción del usuario final y la auditoría docente sin requerir comandos de terminal, se desarrolló y desplegó una aplicación web desacoplada:
+* 🌐 **Despliegue Live en Producción (Vercel):** [https://desarrollo-de-ia.vercel.app/](https://desarrollo-de-ia.vercel.app/)
+* **Servidor backend (`demo_app/server.py` y `api/predict.py`):** Expone un endpoint HTTP REST `/api/predict` que procesa solicitudes JSON y devuelve la predicción con el modelo Random Forest.
+* **Landing interactiva:** Interfaz moderna y responsiva con selector de dimensiones, marca fabricante, 5 botones de prueba rápida y badge visual con el costo estimado en INR.
+* **Ejecución local desacoplada:**
   ```powershell
   py -3.14 demo_app/server.py
-  # Servidor disponible en http://localhost:8000
+  # Servidor local disponible en http://localhost:8000
   ```
 
 ---

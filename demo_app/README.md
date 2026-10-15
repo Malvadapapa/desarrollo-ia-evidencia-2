@@ -18,8 +18,13 @@ demo_app/
 
 ---
 
-## 🚀 Cómo Iniciar la Aplicación
+## 🚀 Cómo Probar la Aplicación
 
+### Opción 1: En la Nube (Producción Live en Vercel)
+Acceso inmediato sin instalar nada:
+👉 **[https://desarrollo-de-ia.vercel.app/](https://desarrollo-de-ia.vercel.app/)**
+
+### Opción 2: Localmente en tu Máquina
 Desde la raíz del repositorio, ejecutá:
 
 ```powershell
@@ -29,7 +34,6 @@ py -3.14 demo_app/server.py
 El servidor iniciará automáticamente en:
 👉 **`http://localhost:8000`**
 
-Abrí esa dirección en cualquier navegador web.
 
 ---
 
