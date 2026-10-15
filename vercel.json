@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "rewrites": [
+    {
+      "source": "/api/predict",
+      "destination": "/api/predict.py"
+    },
+    {
+      "source": "/api/health",
+      "destination": "/api/predict.py"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/public/$1"
+    }
+  ]
+}
